@@ -70,7 +70,7 @@ function _chatList (showArchivedChats) {
 
 function getChatListItemById (chatId, list, i) {
   const chat = this.getFullChatById(chatId)
-  if(!chat) return null
+  if (!chat) return null
 
   const {
     id,
@@ -91,7 +91,7 @@ function getChatListItemById (chatId, list, i) {
 
   const isArchiveLink = id === C.DC_CHAT_ID_ARCHIVED_LINK
 
-  let summary = list.getSummary(i).toJson()
+  const summary = list.getSummary(i).toJson()
   summary.status = mapCoreMsgStatus2String(summary.state)
 
   const lastUpdated = summary.timestamp ? summary.timestamp * 1000 : null
