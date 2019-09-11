@@ -12,7 +12,7 @@ function searchChats (query) {
 
 function selectChat (chatId) {
   this._selectedChatId = chatId
-  const chat = this._getChatById(chatId, true)
+  const chat = this.getFullChatById(chatId, true)
   if (!chat) {
     log.debug(`Error: selected chat not found: ${chatId}`)
     return null
@@ -46,7 +46,7 @@ function chatModified (chatId) {
     chatList.push(id)
     if (id === chatId) i = counter
   }
-  const chat = this.getChatById(chatId, list, i)
+  const chat = this.getChatListItemById(chatId, list, i)
   this.sendToRenderer('DD_EVENT_CHAT_MODIFIED', { chatId, chat })
 }
 
@@ -60,7 +60,7 @@ function _chatList (showArchivedChats) {
 
   for (let i = 0; i < list.getCount(); i++) {
     const chatId = list.getChatId(i)
-    const chat = this.getChatById(chatId, list, i)
+    const chat = this.getChatListItemById(chatId, list, i)
 
     if (!chat) continue
     chatList.push(chat)
@@ -68,40 +68,49 @@ function _chatList (showArchivedChats) {
   return chatList
 }
 
-function getChatById (chatId, list, i) {
-  const chat = this._getChatById(chatId)
+function getChatListItemById (chatId, list, i) {
+  const chat = this.getFullChatById(chatId)
+  if(!chat) return null
 
-  if (!chat) return null
+  const {
+    id,
+    name,
+    profileImage,
+    color,
+    isVerified,
+    isGroup,
+    freshMessageCounter,
+    isDeaddrop
+  } = chat
 
+  let deaddrop = null
   if (chat.id === C.DC_CHAT_ID_DEADDROP) {
     const messageId = list.getMessageId(i)
-    chat.deaddrop = this._deadDropMessage(messageId)
+    deaddrop = this._deadDropMessage(messageId)
   }
 
-  if (chat.id === C.DC_CHAT_ID_ARCHIVED_LINK) {
-    chat.isArchiveLink = true
-  }
+  const isArchiveLink = id === C.DC_CHAT_ID_ARCHIVED_LINK
 
-  const summary = list.getSummary(i).toJson()
+  let summary = list.getSummary(i).toJson()
+  summary.status = mapCoreMsgStatus2String(summary.state)
+
   const lastUpdated = summary.timestamp ? summary.timestamp * 1000 : null
 
   // This is NOT the Chat Oject, it's a smaller version for use as ChatListItem in the ChatList
   return {
-    id: chat.id,
+    id: id,
     email: summary.text1,
-    name: chat.name,
-    avatarPath: chat.profileImage,
-    color: chat.color,
-    lastUpdated: lastUpdated,
-    summary: {
-      text1: summary.text1,
-      text2: summary.text2,
-      status: mapCoreMsgStatus2String(summary.state)
-    },
-    isVerified: chat.isVerified,
-    isGroup: chat.isGroup,
-    unreadCount: chat.freshMessageCounter,
-    isArchiveLink: chat.isArchiveLink
+    name: name,
+    avatarPath: profileImage,
+    color,
+    lastUpdated,
+    summary,
+    isVerified,
+    isGroup,
+    unreadCount: freshMessageCounter,
+    isArchiveLink,
+    isDeaddrop,
+    deaddrop
   }
 }
 
@@ -130,7 +139,7 @@ function mapCoreMsgStatus2String (state) {
   }
 }
 
-function _getChatById (chatId, loadMessages) {
+function getFullChatById (chatId, loadMessages) {
   if (!chatId) return null
   const rawChat = this._dc.getChat(chatId)
   if (!rawChat) return null
@@ -205,8 +214,8 @@ module.exports = function () {
   this.searchChats = searchChats.bind(this)
   this.selectChat = selectChat.bind(this)
   this._chatList = _chatList.bind(this)
-  this.getChatById = getChatById.bind(this)
-  this._getChatById = _getChatById.bind(this)
+  this.getChatListItemById = getChatListItemById.bind(this)
+  this.getFullChatById = getFullChatById.bind(this)
   this._getGeneralFreshMessageCounter = _getGeneralFreshMessageCounter.bind(this)
   this._deadDropMessage = _deadDropMessage.bind(this)
   this.showArchivedChats = showArchivedChats.bind(this)
