@@ -236,18 +236,13 @@ class Message extends React.Component {
   renderContextMenu (triggerId) {
     const {
       attachment,
-      direction,
-      status,
       onDelete,
       onDownload,
       onReply,
       onForward,
-      onRetrySend,
       onShowDetail
     } = this.props
     const tx = window.translate
-
-    const showRetry = status === 'error' && direction === 'outgoing'
 
     return (
       <ContextMenu id={triggerId}>
@@ -292,16 +287,6 @@ class Message extends React.Component {
         >
           {tx('more_info_desktop')}
         </MenuItem>
-        {showRetry ? (
-          <MenuItem
-            attributes={{
-              className: 'module-message__context__retry-send'
-            }}
-            onClick={onRetrySend}
-          >
-            {tx('retry_send')}
-          </MenuItem>
-        ) : null}
         <MenuItem
           attributes={{
             className: 'module-message__context__delete-message'
