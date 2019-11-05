@@ -125,4 +125,16 @@ module.exports = class DCMessageList extends SplitOut {
     this._dc.forwardMessages(msgId, chatId)
     this._controller.chatList.selectChat(chatId)
   }
+
+  getMessageIds (chatId, flags, marker1Before) {
+    return this._dc.getChatMessages(chatId, flags, marker1Before)
+  }
+
+  getMessages (messageIds) {
+    let messages = {}
+    messageIds.map(mId => {
+      messages[mId] = this.messageIdToJson(mId)
+    })
+    return messages
+  }
 }

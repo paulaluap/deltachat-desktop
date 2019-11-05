@@ -17,7 +17,7 @@ const MutationObserver = window.MutationObserver
 
 const SCROLL_BUFFER = 70
 
-export default function MessageList (props) {
+export function MessageList2 (props) {
   const [state, setState] = useState({
     error: false,
     composerSize: 40
@@ -206,5 +206,45 @@ export default function MessageList (props) {
         )
       }}
     </SettingsContext.Consumer>
+  )
+}
+
+import { useLoadedMessages } from './MessageHooks' 
+
+export default function MessageList (props) {
+  const { chat } = props
+  const { loadedMessageIds, messages, fetchMore } = useLoadedMessages(chat.id)
+  console.log('MessageList', chat, loadedMessageIds)    
+ 
+  return (
+    <>
+      <div className='message-list-and-composer'>
+        <div className='message-list-and-composer__message-list'>
+          <div id='message-list'>
+            <ul>
+              {loadedMessageIds.map(mId => {
+                if (typeof messages[mId] === 'undefined') return
+                const message = MessageWrapper.convert(messages[mId])
+
+                //message.onReply = () => logger.debug('reply to', message)
+                //message.onForward = onForward.bind(this, message)
+                return (
+                  <MessageWrapper.render
+                    key={mId}
+                    message={message}
+                    chat={chat}
+                    //onClickContactRequest={() => openDialog('DeadDrop', { deaddrop: message })}
+                    //onClickSetupMessage={onClickSetupMessage.bind(this, message)}
+                    //onShowDetail={onShowDetail.bind(this, message)}
+                    //onDelete={onDelete.bind(this, message)}
+                    //onClickAttachment={onClickAttachment.bind(this, message)}
+                  />
+                )
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
