@@ -6,43 +6,8 @@ const {
 } = require('@blueprintjs/core')
 const ScreenContext = require('../contexts/ScreenContext')
 
-const styled = require('styled-components').default
-
 const MessageWrapper = require('./message/MessageWrapper')
 const Attachment = require('./message/Attachment')
-
-const Wrapper = styled.div`
-  width: 70%;
-  background-color: ${props => props.theme.galleryBg};
-  float: right;
-  padding: 10px;
-  margin-top: 50px;
-`
-const MediaGallery = styled.div`
-  height: calc(100vh - 50px - 40px - 10px);
-  overflow: scroll;
-  padding-top: 20px;
-`
-
-const MediaGalleryItem = styled.div`
-  float: left;
-
-  .module-message__attachment-container {
-    background-color: transparent;
-    border-radius: 0px;
-    margin: 0px !important;
-  }
-
-  .module-message__img-attachment {
-    max-width: 120pt;
-  }
-
-  .module-message__generic-attachment__text {
-    div { color: black !important; }
-  }
-
-
-`
 
 const GROUPS = {
   images: {
@@ -110,7 +75,7 @@ class Media extends React.Component {
   render () {
     const { medias } = this.state
     const tx = window.translate
-    return <Wrapper>
+    return <div className='media-view'>
       <ButtonGroup style={{ minWidth: 200 }}>
         {Object.keys(GROUPS).map((id) => {
           return <Button
@@ -121,11 +86,11 @@ class Media extends React.Component {
           </Button>
         })}
       </ButtonGroup>
-      <MediaGallery>
+      <div className='gallery'>
         {medias.map((raw) => {
           var message = MessageWrapper.convert(raw)
           var msg = message.msg
-          return <MediaGalleryItem
+          return <div className='item'
             onClick={this.onClickMedia.bind(this, message)}
             key={message.id}>
             {Attachment.render({
@@ -133,10 +98,10 @@ class Media extends React.Component {
               attachment: msg.attachment,
               conversationType: 'direct'
             })}
-          </MediaGalleryItem>
+          </div>
         })}
-      </MediaGallery>
-    </Wrapper>
+      </div>
+    </div>
   }
 }
 
