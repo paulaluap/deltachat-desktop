@@ -49,5 +49,23 @@
   },
   "a11y_profile_image_remove":{
     "message": "remove your profile image"
+  },
+  " a11y_delivery_status_error": {
+    "message": "Error"
+  },
+  " a11y_delivery_status_sending": {
+    "message": "Sending"
+  },
+  " a11y_delivery_status_draft": {
+    "message": "Draft"
+  },
+  " a11y_delivery_status_delivered": {
+    "message": "Delivered"
+  },
+  " a11y_delivery_status_read": {
+    "message": "Read"
+  },
+  " a11y_delivery_status_": {
+    "message": "unknown"
   }
 }
