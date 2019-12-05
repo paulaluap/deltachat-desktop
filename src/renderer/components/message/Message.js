@@ -58,43 +58,7 @@ const Author = ({ contact }) => {
   )
 }
 
-const InlineMenu = (MenuRef, showMenu, triggerId, props) => {
-  const {
-    attachment,
-    message,
-    onReply,
-    viewType
-  } = props
-  const tx = window.translate
-
-  return (
-    <div className='message-buttons'>
-      {
-        attachment && viewType !== 23 && <div
-          onClick={onDownload.bind(null, message.msg)}
-          role='button'
-          className='msg-button download hide-on-small'
-          aria-label={tx('save')}
-        />
-      }
-      <div
-        onClick={onReply}
-        role='button'
-        className='msg-button reply hide-on-small'
-      />
-      <ContextMenuTrigger id={triggerId} ref={MenuRef}>
-        <div
-          role='button'
-          onClick={showMenu}
-          className='msg-button menu'
-          aria-label={tx('a11y_message_context_menu_btn_label')}
-        />
-      </ContextMenuTrigger>
-    </div>
-  )
-}
-
-const contextMenu = (props, textSelected, link, triggerId) => {
+const MessageContextMenu = (props, textSelected, link, triggerId) => {
   const {
     attachment,
     direction,
@@ -191,8 +155,6 @@ const Message = (props) => {
     }
   }
 
-  const menu = InlineMenu(MenuRef, showMenu, triggerId, props)
-
   // TODO another check - don't check it only over string
   const longMessage = /\[.{3}\]$/.test(text)
 
@@ -207,7 +169,23 @@ const Message = (props) => {
       )}
     >
       {conversationType === 'group' && direction === 'incoming' && Avatar(message)}
-      {menu}
+      <div className='message-buttons'>
+        { attachment && viewType !== 23 && <div
+            onClick={onDownload.bind(null, message.msg)}
+            role='button'
+            className='msg-button download hide-on-small'
+            aria-label={tx('save')}
+          />
+        }
+        <ContextMenuTrigger id={triggerId} ref={MenuRef}>
+          <div
+            role='button'
+            onClick={showMenu}
+            className='msg-button menu'
+            aria-label={tx('a11y_message_context_menu_btn_label')}
+          />
+        </ContextMenuTrigger>
+      </div>
       <div
         onContextMenu={showMenu}
         className='msg-container'
@@ -228,7 +206,7 @@ const Message = (props) => {
         <MessageMetaData {...props} />
       </div>
       <div onClick={ev => { ev.stopPropagation() }}>
-        {contextMenu(props, textSelected, link, triggerId)}
+        {MessageContextMenu(props, textSelected, link, triggerId)}
       </div>
     </div>
   )
