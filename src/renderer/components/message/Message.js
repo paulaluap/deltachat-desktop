@@ -166,7 +166,6 @@ const Message = (props) => {
     conversationType,
     message,
     text,
-    disableMenu,
     status,
     attachment
   } = props
@@ -192,7 +191,7 @@ const Message = (props) => {
     }
   }
 
-  const menu = !disableMenu && InlineMenu(MenuRef, showMenu, triggerId, props)
+  const menu = InlineMenu(MenuRef, showMenu, triggerId, props)
 
   // TODO another check - don't check it only over string
   const longMessage = /\[.{3}\]$/.test(text)
